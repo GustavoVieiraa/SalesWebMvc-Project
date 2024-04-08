@@ -23,6 +23,13 @@ namespace SalesWebMvc.Controllers
             return View();
         }
 
+        public IActionResult About()
+        {
+            ViewData["MessageTest"] = "Test Sucess";
+
+            return View(); 
+        }
+
         public IActionResult Privacy()
         {
             return View();
