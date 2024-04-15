@@ -12,7 +12,6 @@ namespace SalesWebMvc.Controllers
 {
     public class SellersController : Controller
     {
-
         private readonly SellerService _sellerService;
         private readonly DepartmentService _departmentService;
 
@@ -24,13 +23,13 @@ namespace SalesWebMvc.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var listSellers = await _sellerService.FindAllSellersAsync();
-            return View(listSellers);
+            var list = await _sellerService.FindAllAsync();
+            return View(list);
         }
 
         public async Task<IActionResult> Create()
         {
-            var departments = await _departmentService.FindAllDepartmentsAsync();
+            var departments = await _departmentService.FindAllAsync();
             var viewModel = new SellerFormViewModel { Departments = departments };
             return View(viewModel);
         }
@@ -41,7 +40,7 @@ namespace SalesWebMvc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var departments = await _departmentService.FindAllDepartmentsAsync();
+                var departments = await _departmentService.FindAllAsync();
                 var viewModel = new SellerFormViewModel { Seller = seller, Departments = departments };
                 return View(viewModel);
             }
@@ -53,18 +52,16 @@ namespace SalesWebMvc.Controllers
         {
             if (id == null)
             {
-                return RedirectToAction(nameof(Error), new { message = "Id not provided"});
+                return RedirectToAction(nameof(Error), new { message = "Id not provided" });
             }
 
             var obj = await _sellerService.FindByIdAsync(id.Value);
-
             if (obj == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not found" });
             }
 
             return View(obj);
-
         }
 
         [HttpPost]
@@ -90,7 +87,7 @@ namespace SalesWebMvc.Controllers
             }
 
             var obj = await _sellerService.FindByIdAsync(id.Value);
-            if(obj == null)
+            if (obj == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not found" });
             }
@@ -108,14 +105,12 @@ namespace SalesWebMvc.Controllers
             var obj = await _sellerService.FindByIdAsync(id.Value);
             if (obj == null)
             {
-                return RedirectToAction(nameof(Error), new { message = "Id not found" });
+                RedirectToAction(nameof(Error), new { message = "Id not found" });
             }
 
-            List<Department> departments = await _departmentService.FindAllDepartmentsAsync();
+            List<Department> departments = await _departmentService.FindAllAsync();
             SellerFormViewModel viewModel = new SellerFormViewModel { Seller = obj, Departments = departments };
-
             return View(viewModel);
-
         }
 
         [HttpPost]
@@ -124,7 +119,7 @@ namespace SalesWebMvc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var departments = await _departmentService.FindAllDepartmentsAsync();
+                var departments = await _departmentService.FindAllAsync();
                 var viewModel = new SellerFormViewModel { Seller = seller, Departments = departments };
                 return View(viewModel);
             }
@@ -142,7 +137,6 @@ namespace SalesWebMvc.Controllers
             {
                 return RedirectToAction(nameof(Error), new { message = e.Message });
             }
-            
         }
 
         public IActionResult Error(string message)
@@ -152,8 +146,8 @@ namespace SalesWebMvc.Controllers
                 Message = message,
                 RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
             };
+
             return View(viewModel);
         }
-
     }
 }

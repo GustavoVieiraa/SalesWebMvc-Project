@@ -1,15 +1,15 @@
 ﻿using SalesWebMvc.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SalesWebMvc.Services.Exceptions;
-using System.Threading.Tasks;
 
 namespace SalesWebMvc.Services
 {
     public class SellerService
     {
-
         private readonly SalesWebMvcContext _context;
 
         public SellerService(SalesWebMvcContext context)
@@ -17,7 +17,7 @@ namespace SalesWebMvc.Services
             _context = context;
         }
 
-        public async Task<List<Seller>> FindAllSellersAsync()
+        public async Task<List<Seller>> FindAllAsync()
         {
             return await _context.Seller.ToListAsync();
         }
@@ -30,7 +30,7 @@ namespace SalesWebMvc.Services
 
         public async Task<Seller> FindByIdAsync(int id)
         {
-            return await _context.Seller.Include(obj => obj.Department).FirstOrDefaultAsync(seller => seller.Id == id);
+            return await _context.Seller.Include(obj => obj.Department).FirstOrDefaultAsync(obj => obj.Id == id);
         }
 
         public async Task RemoveAsync(int id)
@@ -41,20 +41,19 @@ namespace SalesWebMvc.Services
                 _context.Seller.Remove(obj);
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException e)
+            catch (DbUpdateException)
             {
-                throw new IntegrityException(e.Message);
+                throw new IntegrityException("Can't delete seller because she/he has sales");
             }
         }
 
         public async Task UpdateAsync(Seller obj)
         {
-            bool hasAny = await _context.Seller.AnyAsync(seller => seller.Id == obj.Id);
+            bool hasAny = await _context.Seller.AnyAsync(x => x.Id == obj.Id);
             if (!hasAny)
             {
-                throw new NotFoundException("Id not found");
+                throw new NotFoundException("Id not found!");
             }
-
             try
             {
                 _context.Update(obj);
@@ -65,6 +64,5 @@ namespace SalesWebMvc.Services
                 throw new DbConcurrencyException(e.Message);
             }
         }
-
     }
 }
