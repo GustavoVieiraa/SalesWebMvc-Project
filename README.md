@@ -11,6 +11,7 @@ Com esse projeto, coloquei em prática todo o conteúdo aprendido durante o curs
 * MySQL
 * LINQ
 * Task assíncronas - (async & await)
+* Git & GitHub - Fully versioned project
 
 ## <div align="center">Projeto realizado em .NET Core 3 + Bootstrap 4</div>
 
